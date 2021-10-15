@@ -24,5 +24,7 @@ public class Main {
         Pair<Integer,Integer> cartofSearchPair=symbolTable.search("cartof");
         assert (cartofSearchPair.getKey()==7);
         assert (cartofSearchPair.getValue()==0);
+
+        System.out.println(symbolTable.add("daa"));//daa already exists
     }
 }

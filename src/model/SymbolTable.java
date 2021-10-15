@@ -65,6 +65,8 @@ public class SymbolTable {
 
 
     public Pair<Integer, Integer> add(String inputToken) {
+        if(search(inputToken)!=null)
+            return search(inputToken);
         int chainIndex = computeHashValue(inputToken);//identify the right chain
         Node<String> startNode = chainList.get(chainIndex);
         int position = 0;
