@@ -1,0 +1,12 @@
+begin
+int main ( )
+{
+   @ a type string;
+   @ b type string;
+   read a;
+   b <- " computer;
+   a <- a concatenate b;
+   $print a;
+   return 0;
+}
+end

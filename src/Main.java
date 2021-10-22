@@ -1,9 +1,14 @@
 import javafx.util.Pair;
+import model.PIF;
+import model.Scanner;
 import model.SymbolTable;
+
+import java.io.*;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        SymbolTable symbolTable=new SymbolTable();
+        /*SymbolTable symbolTable=new SymbolTable();
         //a+d+a=294, 294%256=38, 38%15=8 =>chain with index 8, position 0
         Pair<Integer,Integer> adaPair=symbolTable.add("ada");
         assert (adaPair.getKey()==8);
@@ -25,6 +30,79 @@ public class Main {
         assert (cartofSearchPair.getKey()==7);
         assert (cartofSearchPair.getValue()==0);
 
-        System.out.println(symbolTable.add("daa"));//daa already exists
+        System.out.println(symbolTable.add("daa"));//daa already exists*/
+
+        //testing the scanner
+
+        //we initialise a new symbol table, a PIF and a scanner
+        SymbolTable newSymbolTable=new SymbolTable();
+        PIF programInternalForm=new PIF();
+        Scanner Scanner=new Scanner();
+        //we also initialise an error string
+        StringBuilder error=new StringBuilder();
+
+        //we test the first program, which computes the maximum out of three numbers
+        //String file = "C:\\Users\\iulia\\lftc\\src\\p1.txt";
+
+        //we test the second program, which computes the gcd of two numbers
+        //String file = "C:\\Users\\iulia\\lftc\\src\\p2.txt";
+
+        //we test the error program
+        //String file = "C:\\Users\\iulia\\lftc\\src\\p1err.txt";
+
+        //we test the third program, which computes the sum of n numbers
+        String file = "C:\\Users\\iulia\\lftc\\src\\p3.txt";
+
+        String line;
+        int count=0;
+        try {
+
+            FileReader fileReader =
+                    new FileReader(file);
+            BufferedReader bufferedReader =
+                    new BufferedReader(fileReader);
+            BufferedWriter writerSymbolTable = new BufferedWriter(new FileWriter("C:\\Users\\iulia\\lftc\\src\\ST.out"));
+            BufferedWriter writerPIF = new BufferedWriter(new FileWriter("C:\\Users\\iulia\\lftc\\src\\PIF.out"));
+
+
+            while((line = bufferedReader.readLine()) != null) {
+                count++;
+                //quick printing to check if the line tokenization is working correctly
+                //System.out.println("Line strip is "+line.strip()+"\n");
+                ArrayList<String> tokens=Scanner.lineTokenization(line.strip());
+                //System.out.println(tokens);
+                //tokenization working correctly
+                for (String token: tokens){
+                    if(Scanner.verifyTokenAsOperator(token) ||
+                            (token.length()==1 && Scanner.verifyTokenAsSeparator(token.charAt(0))) ||
+                            Scanner.verifyTokenAsReservedWord(token)) {
+                        programInternalForm.add(token,new Pair(0,0));
+                    }
+                    else if(Scanner.verifyTokenAsConstant(token)){
+                        programInternalForm.add("0",newSymbolTable.retrievePositionOrAdd(token));
+                    }
+                    else if(Scanner.verifyTokenAsIdentifier(token)){
+                        programInternalForm.add("1",newSymbolTable.retrievePositionOrAdd(token));
+                    }
+                    else{
+                        error.append("There is an error at line : "+count+": "+ token+ "\n");
+                    }
+
+                }
+            }
+            writerSymbolTable.write(newSymbolTable.toString());
+            writerPIF.write(programInternalForm.toString());
+            writerPIF.close();
+            writerSymbolTable.close();
+            if(error.length()!=0) {
+                System.out.println(error);
+            }
+            else{
+                System.out.println("The input program was found to be lexically correct.");
+            }
+            bufferedReader.close();
+        } catch(IOException exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 }

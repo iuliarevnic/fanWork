@@ -97,4 +97,16 @@ public class SymbolTable {
         }
         return symbolTableString;
     }
+
+
+    public Pair<Integer, Integer> retrievePositionOrAdd(String token) {
+        //checks to see if token is already in the symbol table, in which case it returns its position
+        //adds it, otherwise
+        Pair<Integer, Integer> index = search(token);
+        if (index == null) {
+            index = add(token);
+        }
+        return index;
+
+    }
 }
