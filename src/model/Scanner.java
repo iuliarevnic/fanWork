@@ -64,12 +64,16 @@ public class Scanner {
     }
 
     private Pair<String,Integer> getOperatorToken(String line,Integer currentIndex){
+        //if we find part of an operator(only operators can contain multiple characters)
+        //we get the whole operator
         String token="";
         Integer start=currentIndex;
+        //we look ahead
         while(currentIndex < line.length() && verifyOperatorContainingToken(line.charAt(currentIndex))){
             token+=line.charAt(currentIndex);
             currentIndex+=1;
         }
+        //we verify the obtained operator against the list retrieved from listOfTokens.in
         if(verifyTokenAsOperator(token)){
             return new Pair(token,currentIndex);
         }
@@ -80,11 +84,13 @@ public class Scanner {
 
     public ArrayList<String> lineTokenization(String line){
 
-        String token="";
+        //we parse a line and split it into tokens
+        String token="";//current token
         Integer index=-1;
-        ArrayList<String> tokenList=new ArrayList<>();
+        ArrayList<String> tokenList=new ArrayList<>();//list of all tokens in the given line
         while(index<line.length()){
             if(token.equals(" ")) {
+                //we ignore spaces
                 token="";
             }
             else if(index!=-1 && verifyOperatorContainingToken(line.charAt(index))){
@@ -95,8 +101,8 @@ public class Scanner {
                         token=token.substring(0,token.length()-1);
                         tokenList.add(token);
                     }
-                    index=operator.getValue()-1;
-                    tokenList.add(operator.getKey());
+                    index=operator.getValue()-1;//we skip to the end of the operator
+                    tokenList.add(operator.getKey());//we add the operator to our tokenList
                     token="";
                 }
             }
