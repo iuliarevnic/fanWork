@@ -1,16 +1,16 @@
 Symbol table
-Chain number 0: Node{key=toString, next=null}
-Chain number 1: Node{key=noList, next=null}
+Chain number 0: null
+Chain number 1: null
 Chain number 2: null
-Chain number 3: Node{key=0, next=Node{key=The, next=Node{key=of, next=null}}}
-Chain number 4: Node{key=1, next=null}
-Chain number 5: Node{key=n, next=null}
+Chain number 3: Node{key=0, next=null}
+Chain number 4: null
+Chain number 5: null
 Chain number 6: null
 Chain number 7: Node{key=a, next=null}
-Chain number 8: Node{key=list, next=null}
+Chain number 8: Node{key=b, next=null}
 Chain number 9: null
-Chain number 10: Node{key=sum, next=Node{key=given, next=Node{key=is, next=null}}}
-Chain number 11: Node{key=add, next=null}
-Chain number 12: Node{key=numbers, next=null}
+Chain number 10: null
+Chain number 11: null
+Chain number 12: null
 Chain number 13: null
 Chain number 14: null

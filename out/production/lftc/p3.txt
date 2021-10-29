@@ -1,22 +1,21 @@
 begin
-int main ( )
+int main()
 {
-  @ sum type int;
-  @ noList type List;
-  noList <- new List ( );
-  sum <- 0;
+  @sum type int;
+  @noList type List;
+  noList<-new List();
+  sum<-0;
   @ n type int;
   read n;
   @ a type int;
-  while ( n > 0 )
-  {
+  while(n>0){
       read a;
       noList.add(a);
-      sum <- sum + a;
-      n <- n - 1;
+      sum<-sum+a;
+      n<-n-1;
   }
-  print " The given list of numbers is " + noList.toString();
-  print " The sum is " + sum;
+  print noList.toString();
+  print sum;
   return 0;
 }
 end

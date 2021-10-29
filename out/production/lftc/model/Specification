@@ -1,0 +1,201 @@
+Iulia Revnic
+
+
+Alphabet:
+a.	Upper (A-Z) and lower case letters (a-z) of the English alphabet
+b.	Decimal digits (0-9); Lexic:
+a.Special symbols, representing:
+- operators + - * / % <- < <= == >= > != concatenate && ||
+-	separators () { } ; space
+-	reserved words: begin, end, type, read, print, if, else, while, int, string, List, new, concatenate
+
+
+b.identifiers
+-a sequence of letters and digits, such that the first character is a letter;
+the rule is:
+identifier ::= letter {letter | digit}
+letter ::= a|b|…|z|A|B|…|Z digit ::= 0|1|2|…|9
+
+c.constants Rules:
+1.	List:
+List::= “[” elementSequence “]”
+elementSequence::= element | element “,” elementSequence element::= int | string
+2.	Int
+int::= digit | nonZeroDigit digitSequence digit ::= 0|1|2|…|9
+nonZeroDigit::= 1|2|…|9
+digitSequence::= digit | digit digitSequence 3.String
+
+string::= “”” letter {letter | digit | specialCharacter} | digit {letter | digit |specialCharacter} “””
+specialCharacter::= ! | . | , | : |? | _ | - | * | + | = | / letter::= a|b|…|z|A|B|…|Z
+digit ::= 0|1|2|…|9
+4. Boolean
+boolean= “true” | “false”
+
+
+constant = List | int | string | boolean
+
+
+Tokens:
+
+
+
+<-
+&&
+||
+>=
+>
+<=
+<
+==
+!=
++
+-
+*
+/
+%
+concatenate
+(
+)
+{
+}
+;
+,
+space
+.
+new
+space
+main
+return
+begin
+end
+type
+read
+print
+if
+else
+while
+int
+string
+List
+@
+
+
+program ::= "begin” “int” “main” “(“ “)” “{" decllist ";" cmpdstmt "return” “0” “;” “}” “end "
+
+decllist ::= declaration | declaration ";"
+decllist declaration ::= “@” IDENTIFIER "type" type
+type ::= "boolean" | "string" | "int" | "List"
+arraydecl ::= IDENTIFIER assignList “;”
+
+assignList ::= IDENTIFIER "<-" "new" type "List" "(" ")" “;”
+
+arrayString ::= IDENTIFIER “.” “toString” “(” “)” “;”
+
+arrayAdd::= IDENTIFIER “.” “add” “(” idConst “)” “;”
+
+arrayDel::= IDENTIFIER “.” “del” “(” idConst “)” “;”
+
+idConst::= IDENTIFIER | const cmpdstmt ::= stmtlist
+stmtlist ::= stmt | stmt stmtlist stmt ::= simplstmt | structstmt
+simplstmt ::= assignstmt | iostmt
+assignstmt ::= IDENTIFIER "<-" expression
+expression ::= expression "+" term | term
+term ::= term "*" factor | factor
+factor ::= "(" expression ")" | IDENTIFIER
+iostmt ::= "READ" | "PRINT" "(" IDENTIFIER ")"
+structstmt ::= cmpdstmt | ifstmt | whilestmt
+
+ifstmt ::= "IF" condition “{” stmt ["ELSE" “{” stmt “}”] “}”
+
+whilestmt ::= "WHILE" condition “{” stmt “}”
+condition ::= “(” expression RELATION expression “)”
+RELATION ::= "<" | "<=" | "==" | ">=" | ">" | “ != ”
+
+p1 max of 3 numbers begin
+
+begin
+int main ( )
+{
+ @ a type int;
+ @ b type int;
+ @ c type int;
+ read a;
+ read b;
+ read c;
+ if ( a >= b && a >= c )
+{
+   print a;
+}
+else if ( b >= a && b >= c )
+{
+ print b;
+} else if ( c >= a && c >= b )
+{
+ print c;
+}
+return 0;
+}
+end
+
+p1 with error(“lipsa la computer, $ la $print a; in loc de print)
+
+begin
+int main ( )
+{
+   @ a type string;
+   @ b type string;
+   read a;
+   b <- "computer;
+   a <- a concatenate b;
+   $print a;
+   return 0;
+}
+end
+
+p2 gcd of 2 numbers
+
+begin
+int main ( )
+{
+ @ a type int;
+ @ b type int;
+ read a;
+ read b;
+ while ( a != b )
+{
+  if ( a > b )
+  {
+      a <- a - b;
+  }
+    else {
+            b <- b - a;
+         }
+  }
+  print a;
+  return 0;
+}
+end
+
+p3 sum of n numbers
+
+begin
+int main()
+{
+  @sum type int;
+  @noList type List;
+  noList<-new List();
+  sum<-0;
+  @ n type int;
+  read n;
+  @ a type int;
+  while(n>0){
+      read a;
+      noList.add(a);
+      sum<-sum+a;
+      n<-n-1;
+  }
+  print noList.toString();
+  print sum;
+  return 0;
+}
+end

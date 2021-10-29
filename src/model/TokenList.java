@@ -48,7 +48,7 @@ public class TokenList {
                     listOfOperators.add(line.strip());
                 }
                 //next are the separators
-                else if(i <=24){
+                else if(i <=23){
                     if (line.strip().equals("space")){
                         listOfSeparators.add(" ");
                     }

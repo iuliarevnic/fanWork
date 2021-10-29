@@ -4,7 +4,7 @@ int main ( )
    @ a type string;
    @ b type string;
    read a;
-   b <- " computer;
+   b <- "computer;
    a <- a concatenate b;
    $print a;
    return 0;
