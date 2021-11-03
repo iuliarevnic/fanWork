@@ -48,13 +48,13 @@ public class Main {
         //String file = "C:\\Users\\iulia\\lftc\\src\\p1.txt";
 
         //we test the second program, which computes the gcd of two numbers
-        String file = "C:\\Users\\iulia\\lftc\\src\\p2.txt";
+        //String file = "C:\\Users\\iulia\\lftc\\src\\p2.txt";
 
         //we test the error program
         //String file = "C:\\Users\\iulia\\lftc\\src\\p1err.txt";
 
         //we test the third program, which computes the sum of n numbers
-        //String file = "C:\\Users\\iulia\\lftc\\src\\p3.txt";
+        String file = "C:\\Users\\iulia\\lftc\\src\\p3.txt";
 
         String line;
         int count=0;
