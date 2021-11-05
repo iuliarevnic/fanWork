@@ -4,7 +4,7 @@ int main()
   @sum type int;
   @noList type List;
   noList<-new List();
-  sum<--10;
+  sum<-0;
   @ n type int;
   read n;
   @ a type int;

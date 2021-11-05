@@ -73,6 +73,9 @@ public class Scanner {
     public Boolean verifyTokenAsConstant(String token){
         return token.matches("^[0]|[+-]?[1-9][0-9]*|\\\"([a-zA-Z0-9])*\\\"|true|false|'[0-9a-zA-Z]']$");
     }
+    public Boolean verifyTokenAsNonIntegerConstant(String token){
+        return token.matches("^\\\"([a-zA-Z0-9])*\\\"|true|false|'[0-9a-zA-Z]']$");
+    }
 
     private Pair<String,Integer> getReservedWordToken(String line,Integer currentIndex){
         String token="";
@@ -152,7 +155,7 @@ public class Scanner {
                     token="";
                 }
             }else if(index!=-1 && ((String.valueOf(line.charAt(index)).equals("<") && String.valueOf(line.charAt(index+1)).equals("="))
-            || (String.valueOf(line.charAt(index)).equals("<") && String.valueOf(line.charAt(index+1)).equals("-")) ||
+                    || (String.valueOf(line.charAt(index)).equals("<") && String.valueOf(line.charAt(index+1)).equals("-")) ||
                     (String.valueOf(line.charAt(index)).equals(">") && String.valueOf(line.charAt(index+1)).equals("=")))){
                 Pair<String,Integer> operator;
                 operator=this.getOperatorToken(line,index);
@@ -205,7 +208,7 @@ public class Scanner {
             }
         }
         if(!token.isEmpty() && !token.equals(" ")){
-                tokenList.add(token);
+            tokenList.add(token);
         }
         return tokenList;
 

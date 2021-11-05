@@ -1,3 +1,4 @@
+import FiniteAutomata.FiniteAutomata;
 import javafx.util.Pair;
 import model.PIF;
 import model.Scanner;
@@ -35,7 +36,18 @@ public class Main {
         //testing the scanner
 
 
-
+        FiniteAutomata finiteAutomataForIdentifiers=new FiniteAutomata();
+        try {
+            finiteAutomataForIdentifiers.read("C:\\Users\\iulia\\lftc\\src\\FiniteAutomata\\identifier.txt");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+        FiniteAutomata finiteAutomataForIntegers=new FiniteAutomata();
+        try {
+            finiteAutomataForIntegers.read("C:\\Users\\iulia\\lftc\\src\\FiniteAutomata\\integer.txt");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
 
         //we initialise a new symbol table, a PIF and a scanner
         SymbolTable newSymbolTable=new SymbolTable();
@@ -48,13 +60,13 @@ public class Main {
         //String file = "C:\\Users\\iulia\\lftc\\src\\p1.txt";
 
         //we test the second program, which computes the gcd of two numbers
-        //String file = "C:\\Users\\iulia\\lftc\\src\\p2.txt";
+        String file = "C:\\Users\\iulia\\lftc\\src\\p2.txt";
 
         //we test the error program
         //String file = "C:\\Users\\iulia\\lftc\\src\\p1err.txt";
 
         //we test the third program, which computes the sum of n numbers
-        String file = "C:\\Users\\iulia\\lftc\\src\\p3.txt";
+        //String file = "C:\\Users\\iulia\\lftc\\src\\p3.txt";
 
         String line;
         int count=0;
@@ -81,10 +93,18 @@ public class Main {
                             Scanner.verifyTokenAsReservedWord(token)) {
                         programInternalForm.add(token,new Pair(0,0));
                     }
-                    else if(Scanner.verifyTokenAsConstant(token)){
+                    /*else if(Scanner.verifyTokenAsConstant(token)){
                         programInternalForm.add("constant",newSymbolTable.retrievePositionOrAdd(token));
                     }
                     else if(Scanner.verifyTokenAsIdentifier(token)){
+                        programInternalForm.add("identifier",newSymbolTable.retrievePositionOrAdd(token));
+                    }*/
+                    else if(finiteAutomataForIntegers.verifySequence(token)){//for integer constants
+                        programInternalForm.add("constant",newSymbolTable.retrievePositionOrAdd(token));
+                    }else if(Scanner.verifyTokenAsNonIntegerConstant(token)){
+                        programInternalForm.add("constant",newSymbolTable.retrievePositionOrAdd(token));
+                    }
+                    else if(finiteAutomataForIdentifiers.verifySequence(token)){
                         programInternalForm.add("identifier",newSymbolTable.retrievePositionOrAdd(token));
                     }
                     else{

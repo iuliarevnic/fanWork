@@ -18,12 +18,18 @@ letter ::= a|b|…|z|A|B|…|Z digit ::= 0|1|2|…|9
 
 c.constants Rules:
 1.	List:
+
 List::= “[” elementSequence “]”
 elementSequence::= element | element “,” elementSequence element::= int | string
 2.	Int
-int::= digit | nonZeroDigit digitSequence digit ::= 0|1|2|…|9
+
+int::= digit | nonZeroDigit digitSequence | sign nonZeroDigit digitSequence
+sign::= +|-
+digit ::= 0|1|2|…|9
 nonZeroDigit::= 1|2|…|9
-digitSequence::= digit | digit digitSequence 3.String
+digitSequence::= digit | digit digitSequence
+
+3.String
 
 string::= “”” letter {letter | digit | specialCharacter} | digit {letter | digit |specialCharacter} “””
 specialCharacter::= ! | . | , | : |? | _ | - | * | + | = | / letter::= a|b|…|z|A|B|…|Z
@@ -95,8 +101,10 @@ arrayAdd::= IDENTIFIER “.” “add” “(” idConst “)” “;”
 
 arrayDel::= IDENTIFIER “.” “del” “(” idConst “)” “;”
 
-idConst::= IDENTIFIER | const cmpdstmt ::= stmtlist
-stmtlist ::= stmt | stmt stmtlist stmt ::= simplstmt | structstmt
+idConst::= IDENTIFIER | const
+cmpdstmt ::= stmtlist
+stmtlist ::= stmt | stmt stmtlist
+stmt ::= simplstmt | structstmt
 simplstmt ::= assignstmt | iostmt
 assignstmt ::= IDENTIFIER "<-" expression
 expression ::= expression "+" term | term
