@@ -45,8 +45,8 @@ public class FiniteAutomata {
     }
 
     public List<Pair<String, String>> getPossibleMoves(String nextState, String sequence) {
-        Set<Pair<String, String>> possibleMoves = D.keySet();
-        return possibleMoves.stream().filter(move -> move.getKey().equals(nextState) && D.get(move).contains(sequence)).collect(Collectors.toList());
+        Set<Pair<String, String>> allMoves = D.keySet();
+        return allMoves.stream().filter(move -> move.getKey().equals(nextState) && D.get(move).contains(sequence)).collect(Collectors.toList());
     }
 
     public boolean verifyDeterministic() {

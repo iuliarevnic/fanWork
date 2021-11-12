@@ -8,7 +8,7 @@ Chain number 5: null
 Chain number 6: null
 Chain number 7: Node{key=a, next=null}
 Chain number 8: Node{key=b, next=null}
-Chain number 9: null
+Chain number 9: Node{key=c, next=null}
 Chain number 10: null
 Chain number 11: null
 Chain number 12: null
