@@ -50,6 +50,7 @@ public class FiniteAutomata {
     }
 
     public boolean verifyDeterministic() {
+        //check that for each source state in the list of transitions, no symbol appears twice(for each symbol there is only one next state)
         Set<Pair<String, String>> moves = D.keySet();
         for (Pair<String, String> move : moves) {
             List<String> possibleSymbols = D.get(move);
