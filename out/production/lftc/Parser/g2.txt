@@ -1,0 +1,20 @@
+N = S P DECLA DECLB READA READB WHILE CONDDIF IF CONDGREAT ASSIGNA ELSE ASSIGNB PRINT IDA IDB
+E = { } ( ) begin end ; @ type int if while main is return while <- - read print else > != 0 a b
+S = S
+P =
+S->begin int main ( ) { P return 0 ; } end
+P->DECLA DECLB READA READB WHILE { IF ELSE } PRINT
+DECLA->@ IDA type int ;
+DECLB->@ IDB type int ;
+READA->read IDA ;
+READB->read IDB ;
+WHILE->while ( CONDDIF )
+CONDDIF->IDA != IDB
+IF->if ( CONDGREAT ) { ASSIGNA }
+CONDGREAT->IDA > IDB
+ASSIGNA->IDA <- IDA - IDB ;
+ELSE->{ ASSIGNB }
+ASSIGNB->IDB <- IDB - IDA ;
+PRINT->print IDA ;
+IDA->a ;
+IDB->b ;
