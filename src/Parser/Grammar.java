@@ -13,7 +13,7 @@ public class Grammar {
 
     private List<String> N;//set of non-terminal symbols
     private List<String> E;//set of terminal symbols
-    private List<Pair<String, String>> P;//set of productions
+    private List<Pair<String, List<String>>> P;//set of productions
     private String S;//start symbol
 
     public String getS() {
@@ -41,16 +41,16 @@ public class Grammar {
         return E;
     }
 
-    public List<Pair<String, String>> getP() {
+    public List<Pair<String, List<String>>> getP() {
         return P;
     }
 
-    public List<Pair<String, String>> productionsForGivenNonTerminal(String nonTerminal){
+    public List<Pair<String, List<String>>> productionsForGivenNonTerminal(String nonTerminal){
         return P.stream().filter(pair-> pair.getKey().equals(nonTerminal)).collect(Collectors.toList());
     }
 
     public boolean verifyCFG(){
-        for(Pair<String,String> pair : P){
+        for(Pair<String,List<String>> pair : P){
             if(!N.contains(pair.getKey())){
                 //multiple non-terminals on the left-hand side
                 return false;
@@ -58,6 +58,12 @@ public class Grammar {
 
         }
         return true;
+    }
+
+    public List<String> splitRHS(String token) {
+        return Arrays.stream(token
+                        .split(" "))
+                .collect(Collectors.toList());
     }
 
     public void readGrammar(String file) throws Exception {
@@ -83,7 +89,8 @@ public class Grammar {
                         .collect(Collectors.toList());
                 //verify if non-terminal belongs to N
                 if (N.contains(tokens.get(0)) && validateRHS(tokens.get(1))) {
-                    Pair<String,String>  pair= new Pair( tokens.get(0), tokens.get(1));
+                    List<String> rhs = splitRHS(tokens.get(1));
+                    Pair<String, List<String>>  pair = new Pair(tokens.get(0), rhs);
                     P.add(pair);
                     line = bufferedReader.readLine();
                 } else {
