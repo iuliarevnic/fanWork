@@ -29,25 +29,6 @@ public class LL1 {
         First();
     }
 
-    private String concatenationFirst(String firstSymbol, String secondSymbol) {
-        if(firstSymbol.equals("E"))
-            return secondSymbol;
-        return firstSymbol;
-    }
-
-    private Set<String> concatenationTwoSets(Set<String> firstSet, Set<String> secondSet) {
-        Set<String> result = new HashSet<>();
-        if(firstSet.isEmpty())
-            return secondSet;
-        if(secondSet.isEmpty())
-            return firstSet;
-        for(String firstSetSymbol: firstSet) {
-            for(String secondSetSymbol: secondSet)
-                result.add(concatenationFirst(firstSetSymbol, secondSetSymbol));
-        }
-        return result;
-    }
-
     private void First() {
         List<String> nonTerminals = this.grammar.getN();
         List<String> terminals = this.grammar.getE();
@@ -69,13 +50,18 @@ public class LL1 {
         boolean isChanged = true;
         while(isChanged) {
             isChanged = false;
+            //get all non-terminals in the lhs of productions
             List<String> lhs=productions.stream().map(Pair::getKey).collect(Collectors.toList());
             for(String lhsNonTerminal: lhs) {
+                //get all the rhs for the given lhsNonTerminal
                 List<List<String>> rhs=productions.stream().filter(pair->pair.getKey().equals(lhsNonTerminal))
                         .map(Pair::getValue).collect(Collectors.toList());
+                //for each rhs, we check the first symbol
                 for(List<String> rhsSequence: rhs) {
+                    //previous set for current lhsNonTerminal
                     Set<String> copyPrevious = first.get(lhsNonTerminal);
                     Set<String> copy = Set.copyOf(first.get(lhsNonTerminal));
+                    //result will contain the possible newly added symbols
                     Set<String> result = new HashSet<>();
                     if(rhsSequence.get(0).equals("E"))
                     {
@@ -83,6 +69,7 @@ public class LL1 {
                     }
                     else if(rhsSequence.size() == 1)
                     {
+                        //if first symbol is a terminal we add it to the result set
                         if(terminals.contains(rhsSequence.get(0)))
                             result.add(rhsSequence.get(0));
                         else
@@ -90,9 +77,19 @@ public class LL1 {
                             result.addAll(this.first.get(rhsSequence.get(0)));
                     }
                     else {
-                        result.addAll(this.first.get(rhsSequence.get(0)));
+                        //if first non-terminal contains epsilon, we go to the next one, and apply the same reasoning
+                        if(this.first.get(rhsSequence.get(0)).contains("E")){
+                        result = firstFromConcatenationTwoSets(this.first.get(rhsSequence.get(0)),
+                                this.first.get(rhsSequence.get(1)));
+                        for (int i = 2; i < rhsSequence.size(); i++) {
+                            result = firstFromConcatenationTwoSets(result,
+                                    this.first.get(rhsSequence.get(i)));
+                        }}
+                        else{
+                            result.addAll(this.first.get(rhsSequence.get(0)));
+                        }
                     }
-
+                    //we update the FIRST set for the current lhsNonTerminal
                     copyPrevious.addAll(result);
                     if(!copyPrevious.equals(copy)) {
                         isChanged = true;
@@ -108,6 +105,25 @@ public class LL1 {
             if(nonTerminals.contains(symbol))
                 System.out.println(symbol + " FIRST=" + first.get(symbol));
         }
+    }
+
+    private String firstFromConcatenationTwoSymbols(String firstSymbol, String secondSymbol) {
+        if(firstSymbol.equals("E"))
+            return secondSymbol;
+        return firstSymbol;
+    }
+
+    private Set<String> firstFromConcatenationTwoSets(Set<String> firstSet, Set<String> secondSet) {
+        Set<String> result = new HashSet<>();
+        if(firstSet.isEmpty())
+            return secondSet;
+        if(secondSet.isEmpty())
+            return firstSet;
+        for(String firstSetSymbol: firstSet) {
+            for(String secondSetSymbol: secondSet)
+                result.add(firstFromConcatenationTwoSymbols(firstSetSymbol, secondSetSymbol));
+        }
+        return result;
     }
 
 }
