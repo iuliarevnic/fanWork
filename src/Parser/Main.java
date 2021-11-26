@@ -49,12 +49,13 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         System.out.print("name: ");
         String name = scan.nextLine();
-        String beginningOfPathIulia = "C:\\Users\\iulia\\lftc\\src\\Parser\\g2.txt";
+        String beginningOfPathIulia = "C:\\Users\\iulia\\lftc\\src\\Parser\\g3.txt";
         String beginningOfPathAna = "/Users/anasavu/Documents/UBB/Sem5/FLCD/labs/fanWork/src/Parser/g1.txt";
-        if (name == "iulia")
+        if (name.equals("iulia"))
             readGrammar(beginningOfPathIulia);
         else
             readGrammar(beginningOfPathAna);
+        LL1 ll1=new LL1(grammar);
         showMenu();
 
         while (true) {

@@ -88,8 +88,8 @@ List
 
 program ::= "begin” “int” “main” “(“ “)” “{" decllist ";" cmpdstmt "return” “0” “;” “}” “end "
 
-decllist ::= declaration | declaration ";"
-decllist declaration ::= “@” IDENTIFIER "type" type
+decllist ::= declaration | declaration ";" decllist
+declaration ::= “@” IDENTIFIER "type" type
 type ::= "boolean" | "string" | "int" | "List"
 arraydecl ::= IDENTIFIER assignList “;”
 

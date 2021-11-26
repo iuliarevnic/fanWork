@@ -103,7 +103,7 @@ public class Grammar {
     private boolean validateRHS(String rhs) {
         String[] symbols=rhs.strip().split(" ");
         for(String symbol:symbols){
-            if(!N.contains(symbol) && !E.contains(symbol))
+            if(!N.contains(symbol) && !E.contains(symbol) && !symbol.equals("E"))
                 return false;
         }
         return  true;
