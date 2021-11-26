@@ -49,6 +49,17 @@ public class Grammar {
         return P.stream().filter(pair-> pair.getKey().equals(nonTerminal)).collect(Collectors.toList());
     }
 
+    public List<Pair<String, List<String>>> getPairsWhereGivenNonTerminalIsInRHS(String nonTerminal) {
+        List<Pair<String, List<String>>> productionsHavingTerminal = new ArrayList<>();
+        for(Pair<String, List<String>> production: this.P) {
+            for(String rhs: production.getValue()) {
+                if (rhs.equals(nonTerminal))
+                    productionsHavingTerminal.add(production);
+            }
+        }
+        return productionsHavingTerminal;
+    }
+
     public boolean verifyCFG(){
         for(Pair<String,List<String>> pair : P){
             if(!N.contains(pair.getKey())){

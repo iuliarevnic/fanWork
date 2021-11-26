@@ -110,4 +110,58 @@ public class LL1 {
         }
     }
 
+    private void Follow() {
+        List<String> nonTerminals = this.grammar.getN();
+        List<String> terminals = this.grammar.getE();
+        List<Pair<String, List<String>>> productions = this.grammar.getP();
+
+        //initialize L0
+        for(String nonTerminal: terminals) {
+            if (nonTerminal.equals("S"))
+                this.follow.get(nonTerminal).add("E");
+            else
+                this.follow.get(nonTerminal).add("");
+        }
+
+        //we construct the follow
+        boolean isChanged = true;
+        while(isChanged) {
+            isChanged = false;
+            List<String> lhs = this.grammar.getP().stream().map(Pair::getKey).collect(Collectors.toList());
+            //parse through all the nonTerminals
+            for(String lhsNonTerminal: lhs) {
+                //get all the pairs which have on the lhs the nonTerminal
+                List<Pair<String, List<String>>> productionsHavingNonTerminalInRHS = this.grammar.getPairsWhereGivenNonTerminalIsInRHS(lhsNonTerminal);
+                //for each lhs, perform operations
+                Set<String> result = new HashSet<>();
+                for(Pair<String, List<String>> pair: productionsHavingNonTerminalInRHS) {
+                    List<String> lhsOfNonTerminal = pair.getValue();
+                    for(int i = 0; i < lhsOfNonTerminal.size(); i++) {
+
+                        if (lhsOfNonTerminal.get(i).equals(lhsNonTerminal))
+                            if(i == lhsOfNonTerminal.size() - 1) {
+                                //check on the lhs of the production
+                                Set<String> previousLOfNonTerminal = this.follow.get(pair.getKey());
+                                result.addAll(previousLOfNonTerminal);
+                            }
+                            else {
+                                boolean isFollowingTerminal = false;
+                                for(String terminal: terminals)
+                                    if(terminal.equals(lhsOfNonTerminal.get(i+1)))
+                                    {
+                                        result.add(terminal);
+                                        isFollowingTerminal = true;
+                                    }
+                                if (!isFollowingTerminal)
+                                {
+                                    //first de terminal
+
+                                }
+                            }
+                    }
+                }
+            }
+        }
+    }
+
 }
