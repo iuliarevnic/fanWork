@@ -7,10 +7,10 @@ public class Main {
     private static Grammar grammar=new Grammar();
 
 
-    private static void readGrammar() {
+    private static void readGrammar(String path) {
         try {
 
-            grammar.readGrammar("C:\\Users\\iulia\\lftc\\src\\Parser\\g2.txt");
+            grammar.readGrammar(path);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
@@ -46,10 +46,19 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        readGrammar();
-        showMenu();
         Scanner scan = new Scanner(System.in);
+        System.out.print("name: ");
+        String name = scan.nextLine();
+        String beginningOfPathIulia = "C:\\Users\\iulia\\lftc\\src\\Parser\\g2.txt";
+        String beginningOfPathAna = "/Users/anasavu/Documents/UBB/Sem5/FLCD/labs/fanWork/src/Parser/g1.txt";
+        if (name == "iulia")
+            readGrammar(beginningOfPathIulia);
+        else
+            readGrammar(beginningOfPathAna);
+        showMenu();
+
         while (true) {
+            System.out.print("Option No: ");
             int i = scan.nextInt();
             switch (i) {
                 case 1 -> {
@@ -65,7 +74,7 @@ public class Main {
                     showStartSymbol();
                 }
                 case 5 -> {
-                    System.out.println("Give non-terminal:");
+                    System.out.print("Give non-terminal: ");
                     scan.nextLine();
                     String nonTerminal=scan.nextLine();
                     System.out.println(grammar.productionsForGivenNonTerminal(nonTerminal));
