@@ -55,7 +55,10 @@ public class Main {
             readGrammar(beginningOfPathIulia);
         else
             readGrammar(beginningOfPathAna);
-        LL1 ll1=new LL1(grammar);
+        LL1 ll1 = new LL1(grammar);
+        ll1.Follow();
+//        ll1.printFirst();
+//        ll1.printFollow();
         showMenu();
 
         while (true) {

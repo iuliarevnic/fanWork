@@ -5,6 +5,8 @@ import FiniteAutomata.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.copyOfRange;
+
 public class LL1 {
     private Grammar grammar;
     private Map<String, Set<String>> first;
@@ -48,7 +50,7 @@ public class LL1 {
         return result;
     }
 
-    private void First() {
+    public void First() {
         List<String> nonTerminals = this.grammar.getN();
         List<String> terminals = this.grammar.getE();
         List<Pair<String, List<String>>> productions = this.grammar.getP();
@@ -110,58 +112,98 @@ public class LL1 {
         }
     }
 
-    private void Follow() {
+    private String getStringFromList(String list) {
+        return  list.substring(1, list.length()-1);
+    }
+
+    public void Follow() {
         List<String> nonTerminals = this.grammar.getN();
         List<String> terminals = this.grammar.getE();
         List<Pair<String, List<String>>> productions = this.grammar.getP();
 
         //initialize L0
-        for(String nonTerminal: terminals) {
-            if (nonTerminal.equals("S"))
+        String S = getStringFromList(this.grammar.getS());
+
+        for(String nonTerminal: nonTerminals) {
+            System.out.println();
+            if (nonTerminal.equals(S))
                 this.follow.get(nonTerminal).add("E");
             else
                 this.follow.get(nonTerminal).add("");
         }
 
+
+        for (String symbol: this.follow.keySet())
+            if(nonTerminals.contains(symbol))
+                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
+
+        System.out.println("after initialization");
+
         //we construct the follow
         boolean isChanged = true;
         while(isChanged) {
             isChanged = false;
-            List<String> lhs = this.grammar.getP().stream().map(Pair::getKey).collect(Collectors.toList());
+
+            //List<String> lhs = this.grammar.getP().stream().map(Pair::getKey).collect(Collectors.toList());
+
             //parse through all the nonTerminals
-            for(String lhsNonTerminal: lhs) {
+            for(String nonTerminal: nonTerminals) {
+
                 //get all the pairs which have on the lhs the nonTerminal
-                List<Pair<String, List<String>>> productionsHavingNonTerminalInRHS = this.grammar.getPairsWhereGivenNonTerminalIsInRHS(lhsNonTerminal);
+                List<Pair<String, List<String>>> productionsHavingNonTerminalInLHS = this.grammar.getPairsWhereGivenNonTerminalIsInRHS(nonTerminal);
+                System.out.println(productionsHavingNonTerminalInLHS);
+
                 //for each lhs, perform operations
                 Set<String> result = new HashSet<>();
-                for(Pair<String, List<String>> pair: productionsHavingNonTerminalInRHS) {
+                for (Pair<String, List<String>> pair : productionsHavingNonTerminalInLHS) {
                     List<String> lhsOfNonTerminal = pair.getValue();
-                    for(int i = 0; i < lhsOfNonTerminal.size(); i++) {
+                    for (int i = 0; i < lhsOfNonTerminal.size(); i++) {
 
-                        if (lhsOfNonTerminal.get(i).equals(lhsNonTerminal))
-                            if(i == lhsOfNonTerminal.size() - 1) {
+                        if (lhsOfNonTerminal.get(i).equals(nonTerminal))
+                            //check if nonTerminal is on the last position of the production
+                            if (i == lhsOfNonTerminal.size() - 1) {
                                 //check on the lhs of the production
                                 Set<String> previousLOfNonTerminal = this.follow.get(pair.getKey());
                                 result.addAll(previousLOfNonTerminal);
-                            }
-                            else {
+                            } else {
                                 boolean isFollowingTerminal = false;
-                                for(String terminal: terminals)
-                                    if(terminal.equals(lhsOfNonTerminal.get(i+1)))
-                                    {
+                                for (String terminal : terminals)
+                                    if (terminal.equals(lhsOfNonTerminal.get(i + 1))) {
                                         result.add(terminal);
                                         isFollowingTerminal = true;
                                     }
-                                if (!isFollowingTerminal)
-                                {
-                                    //first de terminal
+                                if (!isFollowingTerminal) {
+                                    //if epsilon appears in the First(followingNonTerminal)
+                                    //then Follow(lhsNonTerminal) = First(followingNonTerminal) \ epsilon U Follow (pair.getKey())
+                                    Set<String> first = this.first.get(lhsOfNonTerminal.get(i + 1));
+                                    if (first.contains("E")) {
+                                        result.addAll(this.first.get(lhsOfNonTerminal.get(i + 1)));
+                                        result.addAll(this.follow.get(pair.getKey()));
+                                        result.remove("E");
+                                    }
+                                    //otherwise,
+                                    //Follow(lhsNonTerminal) = First(followingNonTerminal)
+                                    else {
+                                        result.addAll(this.first.get(lhsOfNonTerminal.get(i + 1)));
+                                    }
 
                                 }
                             }
                     }
                 }
+                this.first.get(nonTerminal).addAll(result);
             }
         }
+
+        for (String symbol: this.follow.keySet())
+            if(nonTerminals.contains(symbol))
+                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
+    }
+
+    public void printFollow() {
+        for (String symbol: this.follow.keySet())
+            if(this.grammar.getN().contains(symbol))
+                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
     }
 
 }
