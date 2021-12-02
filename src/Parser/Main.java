@@ -50,7 +50,7 @@ public class Main {
         System.out.print("name: ");
         String name = scan.nextLine();
         String beginningOfPathIulia = "C:\\Users\\iulia\\lftc\\src\\Parser\\g3.txt";
-        String beginningOfPathAna = "/Users/anasavu/Documents/UBB/Sem5/FLCD/labs/fanWork/src/Parser/g1.txt";
+        String beginningOfPathAna = "/Users/anasavu/Documents/UBB/Sem5/FLCD/labs/fanWork/src/Parser/g3.txt";
         if (name.equals("iulia"))
             readGrammar(beginningOfPathIulia);
         else
