@@ -110,6 +110,13 @@ public class Grammar {
     }
 
     public List<Pair<String, List<String>>> getPairsWhereGivenNonTerminalIsInRHS(String nonTerminal) {
-        return null;
+        List<Pair<String, List<String>>> productionsHavingTerminal = new ArrayList<>();
+        for(Pair<String, List<String>> production: this.P) {
+            for(String rhs: production.getValue()) {
+                if (rhs.equals(nonTerminal))
+                    productionsHavingTerminal.add(production);
+            }
+        }
+        return productionsHavingTerminal;
     }
 }
