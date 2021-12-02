@@ -126,4 +126,109 @@ public class LL1 {
         return result;
     }
 
+    private String getStringFromList(String list) {
+        return  list.substring(1, list.length()-1);
+    }
+
+    public void Follow() {
+        List<String> nonTerminals = this.grammar.getN();
+        List<String> terminals = this.grammar.getE();
+        List<Pair<String, List<String>>> productions = this.grammar.getP();
+
+        //initialize L0
+        String S = getStringFromList(this.grammar.getS());
+
+        for(String nonTerminal: nonTerminals) {
+            System.out.println();
+            if (nonTerminal.equals(S))
+                this.follow.get(nonTerminal).add("E");
+            else
+                this.follow.get(nonTerminal).add("");
+        }
+
+        //we construct the follow
+        boolean isChanged = true;
+        while(isChanged) {
+            isChanged = false;
+
+            //List<String> lhs = this.grammar.getP().stream().map(Pair::getKey).collect(Collectors.toList());
+
+            //parse through all the nonTerminals
+            for(String nonTerminal: nonTerminals) {
+
+                //get all the pairs which have on the lhs the nonTerminal
+                List<Pair<String, List<String>>> productionsHavingNonTerminalInLHS = this.grammar.getPairsWhereGivenNonTerminalIsInRHS(nonTerminal);
+//                System.out.print(nonTerminal + " ");
+//                System.out.println(productionsHavingNonTerminalInLHS);
+
+
+                Set<String> result = new HashSet<>();
+                Set<String> copyPrevious = follow.get(nonTerminal);
+                Set<String> copy = Set.copyOf(follow.get(nonTerminal));
+                //for each lhs, perform operations
+
+                for (Pair<String, List<String>> pair : productionsHavingNonTerminalInLHS) {
+                    List<String> rhsOfNonTerminal = pair.getValue();
+                    for (int i = 0; i < rhsOfNonTerminal.size(); i++) {
+
+                        if (rhsOfNonTerminal.get(i).equals(nonTerminal))
+                            //check if nonTerminal is on the last position of the production
+                            if (i == rhsOfNonTerminal.size() - 1) {
+                                //check on the lhs of the production
+                                Set<String> lhsOfPair = this.follow.get(pair.getKey());
+                                result.addAll(lhsOfPair);
+                            } else {
+                                boolean isFollowingTerminal = false;
+                                for (String terminal : terminals)
+                                    if (terminal.equals(rhsOfNonTerminal.get(i + 1))) {
+                                        result.add(terminal);
+                                        isFollowingTerminal = true;
+                                        break;
+                                    }
+                                if (!isFollowingTerminal) {
+                                    //if epsilon appears in the First(followingNonTerminal)
+                                    //then Follow(lhsNonTerminal) = First(followingNonTerminal) \ epsilon U Follow (pair.getKey())
+                                    Set<String> first = this.first.get(rhsOfNonTerminal.get(i + 1));
+                                    if (first.contains("E")) {
+                                        result.addAll(this.first.get(rhsOfNonTerminal.get(i + 1)));
+                                        result.remove("E");
+                                        result.addAll(this.follow.get(pair.getKey()));
+                                    }
+                                    //otherwise,
+                                    //Follow(lhsNonTerminal) = First(followingNonTerminal)
+                                    else {
+                                        result.addAll(this.first.get(rhsOfNonTerminal.get(i + 1)));
+                                    }
+
+                                }
+                            }
+                        if (result.size() != 0) {
+                            copyPrevious.addAll(result);
+                            copyPrevious.remove("");
+                        }
+                        else {
+                            copyPrevious.addAll(result);
+                        }
+                    }
+                }
+                if(!copyPrevious.equals(copy)){
+                    isChanged = true;
+                    this.follow.get(nonTerminal).addAll(copyPrevious);
+                }
+//                this.first.get(nonTerminal).addAll(result);
+            }
+        }
+
+        for (String symbol: this.follow.keySet())
+            if(nonTerminals.contains(symbol))
+                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
+    }
+
+    public void printFollow() {
+        for (String symbol: this.follow.keySet())
+            if(this.grammar.getN().contains(symbol))
+                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
+    }
+
+
 }

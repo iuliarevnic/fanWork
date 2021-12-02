@@ -108,4 +108,8 @@ public class Grammar {
         }
         return  true;
     }
+
+    public List<Pair<String, List<String>>> getPairsWhereGivenNonTerminalIsInRHS(String nonTerminal) {
+        return null;
+    }
 }
