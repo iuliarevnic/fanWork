@@ -25,8 +25,9 @@ public class LL1 {
         for(String terminal: terminals) {
             this.first.put(terminal, new HashSet<>());
         }
-        //call the method which computes the FIRST set
+        //call the method which computes the FIRST/FOLLOW set
         First();
+        Follow();
     }
 
     private void First() {
