@@ -56,6 +56,7 @@ public class Main {
         else
             readGrammar(beginningOfPathAna);
         LL1 ll1=new LL1(grammar);
+        ll1.parsingTable();
         showMenu();
 
         while (true) {

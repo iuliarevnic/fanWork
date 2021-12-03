@@ -231,5 +231,40 @@ public class LL1 {
                 System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
     }
 
+    public void parsingTable() {
+        String finalTerminal = "$";
+        Map<Pair<String, String>, String> table = new HashMap<>();
+        Map<Pair<String, List<String>>, Integer> productionIndexes = new HashMap<>();
+
+        int i = 1;
+        for (Pair<String, List<String>> production: this.grammar.getP()) {
+            productionIndexes.put(production, i);
+            i++;
+        }
+//        System.out.println(productionIndexes);
+
+
+        for (String terminal: this.grammar.getE())
+        {
+            Pair<String, String> pair = new Pair<>(terminal, terminal);
+            table.put(pair, "pop");
+        }
+
+        table.put(new Pair<>(finalTerminal, finalTerminal), "acc");
+
+        for (String nonTerminal: this.grammar.getN()) {
+
+            Set<String> first = this.first.get(nonTerminal);
+            if (!first.contains("E"))
+            {
+                for(String character: first)
+                {
+
+                    //TODO change 1
+                    table.put(new Pair<>(nonTerminal, character), "1");
+                }
+            }
+        }
+    }
 
 }
