@@ -3,7 +3,10 @@
 
 # User-specific stuff
 .idea/**/workspace.xml
+.idea/**/modules/xml
+.idea/**/misc.xml
 .idea/**/tasks.xml
+.idea/**/vsc.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
