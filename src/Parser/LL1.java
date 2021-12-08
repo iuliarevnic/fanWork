@@ -26,8 +26,12 @@ public class LL1 {
             this.first.put(terminal, new HashSet<>());
         }
         //call the method which computes the FIRST/FOLLOW set
+        System.out.println("inainte de first");
         First();
+        System.out.println("inainte de follow");
         Follow();
+        System.out.println("inainte de parse table");
+        parsingTable();
     }
 
     private void First() {
@@ -231,19 +235,33 @@ public class LL1 {
                 System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
     }
 
+    private Set<String> computeFirstForProduction(List<String> rhs){
+        Set<String> firstForProduction=new HashSet<>();
+        boolean isEpsilon = true;
+        int i=0;
+        while(i<rhs.size()){
+            String symbol=rhs.get(i);
+            //System.out.println(symbol);
+            Set<String> firstForSymbol=first.get(symbol);
+            if(!symbol.equals("E"))
+                firstForProduction.addAll(firstForSymbol);
+            if(!symbol.equals("E") && !firstForSymbol.contains("E")){
+                isEpsilon=false;
+                break;
+            }
+            firstForProduction.remove("E");
+            i++;
+        }
+        if(isEpsilon)
+            firstForProduction.add("E");
+        return firstForProduction;
+    }
+
     public void parsingTable() {
         String finalTerminal = "$";
         Map<Pair<String, String>, String> table = new HashMap<>();
-        Map<Pair<String, List<String>>, Integer> productionIndexes = new HashMap<>();
-
-        int i = 1;
-        for (Pair<String, List<String>> production: this.grammar.getP()) {
-            productionIndexes.put(production, i);
-            i++;
-        }
-//        System.out.println(productionIndexes);
-
-
+        //complete table with pop for every (terminal,terminal) pair
+        //($,$)=acc
         for (String terminal: this.grammar.getE())
         {
             Pair<String, String> pair = new Pair<>(terminal, terminal);
@@ -252,19 +270,40 @@ public class LL1 {
 
         table.put(new Pair<>(finalTerminal, finalTerminal), "acc");
 
-        for (String nonTerminal: this.grammar.getN()) {
-
-            Set<String> first = this.first.get(nonTerminal);
-            if (!first.contains("E"))
-            {
-                for(String character: first)
-                {
-
-                    //TODO change 1
-                    table.put(new Pair<>(nonTerminal, character), "1");
+        List<String> nonTerminals=grammar.getN();
+        for(String nonTerminal:nonTerminals){
+            //for each non-terminal we get the list of productions
+            for( Pair<String, List<String>> production: grammar.productionsForGivenNonTerminal(nonTerminal)){
+                //we get the First set for the current rhs
+                Set<String> firstForProduction=this.computeFirstForProduction(production.getValue());
+                int productionIndex=grammar.getP().indexOf(production)+1;
+                if(!firstForProduction.contains("E")){
+                    for(String terminal:firstForProduction){
+                        if(!this.first.get(nonTerminal).contains(terminal))
+                            break;
+                        Pair<String, String> pair = new Pair<>(nonTerminal, terminal);
+                        String result=String.join(" ",production.getValue());
+                        table.put(pair, result+" "+productionIndex);
+                    }
+                }
+                else{
+                    for(String terminal: this.follow.get(nonTerminal)){
+                        Pair<String, String> pair;
+                        String result=String.join(" ",production.getValue());
+                        if(terminal.equals("E")) {
+                            pair = new Pair<>(nonTerminal, "$");
+                        }
+                        else{
+                            pair=new Pair<>(nonTerminal, terminal);
+                        }
+                        table.put(pair,result+" "+productionIndex);
+                    }
                 }
             }
         }
+
+        System.out.println(table);
+        System.out.println(table.size());
     }
 
 }
