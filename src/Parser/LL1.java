@@ -1,5 +1,6 @@
 package Parser;
 
+import ADT.Tuple;
 import FiniteAutomata.Pair;
 
 import java.util.*;
@@ -9,11 +10,16 @@ public class LL1 {
     private Grammar grammar;
     private Map<String, Set<String>> first;
     private Map<String, Set<String>> follow;
+    private Map<Pair<String, String>, Pair<String, Integer>> parsingTable;
+    private List<Tuple<String, String, String>> parseSequence;
 
     public LL1(Grammar grammar) {
         this.grammar = grammar;
         this.first = new HashMap<>();
         this.follow = new HashMap<>();
+        this.parsingTable = new HashMap<>();
+        this.parseSequence = new ArrayList<>();
+
 
         List<String> nonTerminals = this.grammar.getN();
         for(String nonTerminal: nonTerminals) {
@@ -26,18 +32,17 @@ public class LL1 {
             this.first.put(terminal, new HashSet<>());
         }
         //call the method which computes the FIRST/FOLLOW set
-        System.out.println("inainte de first");
         First();
-        System.out.println("inainte de follow");
         Follow();
-        System.out.println("inainte de parse table");
-        parsingTable();
+        parseTable();
+        //parserOutput("abbc");
     }
 
     private void First() {
         List<String> nonTerminals = this.grammar.getN();
         List<String> terminals = this.grammar.getE();
         List<Pair<String, List<String>>> productions = this.grammar.getP();
+//        Map<String, Set<String>> f = new HashMap<>();
         //initialise F0
         for(String nonTerminal: nonTerminals) {
             //we get all productions for the current nonTerminal
@@ -105,11 +110,6 @@ public class LL1 {
                 }
             }
         }
-
-        for(String symbol: first.keySet()) {
-            if(nonTerminals.contains(symbol))
-                System.out.println(symbol + " FIRST=" + first.get(symbol));
-        }
     }
 
     private String firstFromConcatenationTwoSymbols(String firstSymbol, String secondSymbol) {
@@ -135,16 +135,15 @@ public class LL1 {
         return  list.substring(1, list.length()-1);
     }
 
-    public void Follow() {
+    private void Follow() {
         List<String> nonTerminals = this.grammar.getN();
         List<String> terminals = this.grammar.getE();
-        List<Pair<String, List<String>>> productions = this.grammar.getP();
+        //List<Pair<String, List<String>>> productions = this.grammar.getP();
 
         //initialize L0
         String S = getStringFromList(this.grammar.getS());
 
         for(String nonTerminal: nonTerminals) {
-            System.out.println();
             if (nonTerminal.equals(S))
                 this.follow.get(nonTerminal).add("E");
             else
@@ -223,17 +222,9 @@ public class LL1 {
 //                this.first.get(nonTerminal).addAll(result);
             }
         }
-
-        for (String symbol: this.follow.keySet())
-            if(nonTerminals.contains(symbol))
-                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
     }
 
-    public void printFollow() {
-        for (String symbol: this.follow.keySet())
-            if(this.grammar.getN().contains(symbol))
-                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
-    }
+
 
     private Set<String> computeFirstForProduction(List<String> rhs){
         Set<String> firstForProduction=new HashSet<>();
@@ -257,18 +248,21 @@ public class LL1 {
         return firstForProduction;
     }
 
-    public void parsingTable() {
+    public void parseTable() {
         String finalTerminal = "$";
-        Map<Pair<String, String>, String> table = new HashMap<>();
+        //Map<Pair<String, String>, String> table = new HashMap<>();
         //complete table with pop for every (terminal,terminal) pair
         //($,$)=acc
+
+        //we use a pair to remember what is in the table; it is not useful to have strings
+        //we will denote with 0 the pop and acc actions
         for (String terminal: this.grammar.getE())
         {
             Pair<String, String> pair = new Pair<>(terminal, terminal);
-            table.put(pair, "pop");
+            this.parsingTable.put(pair, new Pair<>("pop", 0));
         }
 
-        table.put(new Pair<>(finalTerminal, finalTerminal), "acc");
+        this.parsingTable.put(new Pair<>(finalTerminal, finalTerminal), new Pair<>("acc", 0));
 
         List<String> nonTerminals=grammar.getN();
         for(String nonTerminal:nonTerminals){
@@ -282,28 +276,151 @@ public class LL1 {
                         if(!this.first.get(nonTerminal).contains(terminal))
                             break;
                         Pair<String, String> pair = new Pair<>(nonTerminal, terminal);
-                        String result=String.join(" ",production.getValue());
-                        table.put(pair, result+" "+productionIndex);
+                        String result=String.join("",production.getValue());
+                        this.parsingTable.put(pair, new Pair<>(result, productionIndex));
                     }
                 }
                 else{
                     for(String terminal: this.follow.get(nonTerminal)){
                         Pair<String, String> pair;
-                        String result=String.join(" ",production.getValue());
+                        String result=String.join("",production.getValue());
                         if(terminal.equals("E")) {
                             pair = new Pair<>(nonTerminal, "$");
                         }
                         else{
                             pair=new Pair<>(nonTerminal, terminal);
                         }
-                        table.put(pair,result+" "+productionIndex);
+                        this.parsingTable.put(pair, new Pair<>(result, productionIndex));
                     }
                 }
             }
         }
-
-        System.out.println(table);
-        System.out.println(table.size());
     }
 
+    public int parserOutput(String sequence) {
+        //List<Tuple<String, String, String>> parseSequence = new ArrayList<>();
+
+        //initial states
+        sequence += "$";
+        String initialState = this.grammar.getS();
+        initialState = initialState.substring(1, initialState.length()-1);
+        initialState += "$";
+        Tuple<String, String, String> initial = new Tuple<>(initialState, sequence, "E");
+        this.parseSequence.add(initial);
+        //index of last tuple from list
+        int i = 0;
+
+        //begin the parsing
+        while(!this.parseSequence.get(i).getWorkingStack().equals("$") || !this.parseSequence.get(i).getInputStack().equals("$"))
+        {
+            String workingStack = this.parseSequence.get(i).getWorkingStack();
+            String inputStack = this.parseSequence.get(i).getInputStack();
+            String outputStack = this.parseSequence.get(i).getOutputStack();
+
+            String newWorkingStack = "";
+            String newInputStack = "";
+            String newOutputStack = "";
+
+            String firstElementWS = workingStack.substring(0,1);
+            String firstElementIS = inputStack.substring(0, 1);
+
+            if (firstElementWS.equals(firstElementIS))
+            {
+                newInputStack = inputStack.substring(1);
+                newWorkingStack = workingStack.substring(1);
+                Tuple<String, String, String> newTuple = new Tuple<>(newWorkingStack, newInputStack, outputStack);
+                this.parseSequence.add(newTuple);
+                i++;
+            }
+            else {
+                Pair<String, String> pair = new Pair<>(firstElementWS, firstElementIS);
+                if(this.parsingTable.containsKey(pair))
+                {
+                    newWorkingStack = this.parsingTable.get(pair).getKey();
+                    newOutputStack = this.parsingTable.get(pair).getValue().toString();
+                    if (outputStack.contains("E"))
+                        outputStack = "";
+                    Tuple<String, String, String> newTuple;
+
+                    if (newWorkingStack.equals("E"))
+                    {
+                        newWorkingStack = workingStack.substring(1);
+                        //newInputStack = inputStack.substring(1);
+                        newTuple = new Tuple<>(newWorkingStack, inputStack, newOutputStack + outputStack);
+                    }
+                    else
+                    {
+                        newTuple = new Tuple<>(newWorkingStack + workingStack.substring(1), inputStack, newOutputStack + outputStack);
+                    }
+
+                    this.parseSequence.add(newTuple);
+                    i++;
+                }
+                else
+                {
+                    Pair<String, String> otherPair = new Pair<>(firstElementIS, firstElementWS);
+                    if(this.parsingTable.containsKey(otherPair))
+                    {
+                        newWorkingStack = this.parsingTable.get(otherPair).getKey();
+                        newOutputStack = this.parsingTable.get(otherPair).getValue().toString();
+                        if (outputStack.contains("E"))
+                            outputStack = "";
+                        Tuple<String, String, String> newTuple;
+                        if (newWorkingStack.equals("E"))
+                        {
+                            newWorkingStack = workingStack.substring(1);
+                            newTuple = new Tuple<>(newWorkingStack, inputStack, newOutputStack + outputStack);
+                        }
+                        else
+                        {
+                            newTuple = new Tuple<>(newWorkingStack + workingStack.substring(1), inputStack, newOutputStack + outputStack);
+                        }
+                        this.parseSequence.add(newTuple);
+                        i++;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+        if (this.parseSequence.get(i).getWorkingStack().equals("$") && this.parseSequence.get(i).getInputStack().equals("$"))
+            return 1;
+        else
+            return 0;
+
+    }
+
+    public void printFirst() {
+        System.out.println("====FIRST====");
+        for(String symbol: this.first.keySet())
+            if(this.grammar.getN().contains(symbol))
+                System.out.println(symbol + " FIRST = " + this.first.get(symbol));
+        System.out.println();
+    }
+
+    public void printFollow() {
+        System.out.println("====FOLLOW====");
+        for (String symbol: this.follow.keySet())
+            if(this.grammar.getN().contains(symbol))
+                System.out.println(symbol + " FOLLOW = " + this.follow.get(symbol));
+        System.out.println();
+    }
+
+    public void printParsingTable() {
+        System.out.println("====PARSING TABLE====");
+        this.parsingTable.forEach((k, v) -> {
+            System.out.println(k.toString() + " " + v);
+            System.out.println();
+        });
+        System.out.println(this.parsingTable.size());
+
+        System.out.println();
+    }
+
+    public void printParserOutput() {
+        System.out.println("====PARSER OUTPUT====");
+        for(Tuple<String, String, String> tuple: this.parseSequence)
+            System.out.println(tuple);
+    }
 }
