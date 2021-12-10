@@ -484,6 +484,15 @@ public class LL1 {
         System.out.println("====PARSER OUTPUT====");
         for(Tuple<String, String, String> tuple: this.parseSequence)
             System.out.println(tuple);
+        String productionsString=this.parseSequence.get(this.parseSequence.size()-1).getOutputStack();
+        for(int i=productionsString.length()-1;i>=0;i--){
+            String rhs="";
+            for(String symbol:grammar.getP().get(Character.getNumericValue(productionsString.charAt(i))-1).getValue()){
+                rhs=rhs+symbol+" ";
+            }
+            System.out.println(grammar.getP().get(Character.getNumericValue(productionsString.charAt(i))-1).getKey()+"->"+
+                    rhs);
+        }
         this.parseSequence=new ArrayList<>();
     }
 }
