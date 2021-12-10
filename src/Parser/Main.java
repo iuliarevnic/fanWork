@@ -61,6 +61,8 @@ public class Main {
         ll1.printFirst();
         ll1.printFollow();
         ll1.printParsingTable();
+        ll1.saveParsingTableToFile();
+//        ll1.saveParserOutputToFile();
         showMenu();
 
         while (true) {
@@ -98,7 +100,9 @@ public class Main {
                     else
                         System.out.println("Sequence was not accepted!");
 
+                    ll1.saveParserOutputToFile();
                     ll1.printParserOutput();
+
 
                 }
             }

@@ -3,6 +3,9 @@ package Parser;
 import ADT.Tuple;
 import FiniteAutomata.Pair;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -418,6 +421,65 @@ public class LL1 {
         System.out.println();
     }
 
+    public void saveParsingTableToFile() {
+        try {
+            File file=new File("C:\\Users\\iulia\\lftc\\src\\ParseTable.out");
+            FileOutputStream fileOutputStream=new FileOutputStream(file);
+            PrintWriter printWriter=new PrintWriter(fileOutputStream);
+            for(Map.Entry<Pair<String,String>,Pair<String,Integer>> parsingTableEntry :this.parsingTable.entrySet()){
+                printWriter.println(parsingTableEntry.getKey().getKey()+" "+parsingTableEntry.getKey().getValue()+" : "+parsingTableEntry.getValue().getKey()+" "+parsingTableEntry.getValue().getValue());
+            }
+
+            printWriter.flush();
+            printWriter.close();
+            fileOutputStream.close();
+        } catch(Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+//        System.out.println("====PARSING TABLE====");
+//        this.parsingTable.forEach((k, v) -> {
+//            System.out.println(k.toString() + " " + v);
+//            System.out.println();
+//        });
+//        System.out.println(this.parsingTable.size());
+//
+//        System.out.println();
+    }
+
+    public void saveParserOutputToFile() {
+        try {
+            File file=new File("C:\\Users\\iulia\\lftc\\src\\ParserOutput.out");
+            FileOutputStream fileOutputStream=new FileOutputStream(file);
+            PrintWriter printWriter=new PrintWriter(fileOutputStream);
+            String productionsString=this.parseSequence.get(this.parseSequence.size()-1).getOutputStack();
+            System.out.println(productionsString);
+            System.out.println(productionsString.length());
+            for(int i=productionsString.length()-1;i>=0;i--){
+                System.out.println(i+" "+productionsString.charAt(i));
+//                System.out.println("Production number "+Character.getNumericValue(productionsString.charAt(i)));
+                String rhs="";
+                for(String symbol:grammar.getP().get(Character.getNumericValue(productionsString.charAt(i))-1).getValue()){
+                    rhs=rhs+symbol+" ";
+                }
+                printWriter.println(grammar.getP().get(Character.getNumericValue(productionsString.charAt(i))-1).getKey()+"->"+
+                        rhs);
+            }
+
+            printWriter.flush();
+            printWriter.close();
+            fileOutputStream.close();
+        } catch(Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+//        System.out.println("====PARSING TABLE====");
+//        this.parsingTable.forEach((k, v) -> {
+//            System.out.println(k.toString() + " " + v);
+//            System.out.println();
+//        });
+//        System.out.println(this.parsingTable.size());
+//
+//        System.out.println();
+    }
     public void printParserOutput() {
         System.out.println("====PARSER OUTPUT====");
         for(Tuple<String, String, String> tuple: this.parseSequence)
