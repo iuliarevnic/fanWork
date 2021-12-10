@@ -422,5 +422,6 @@ public class LL1 {
         System.out.println("====PARSER OUTPUT====");
         for(Tuple<String, String, String> tuple: this.parseSequence)
             System.out.println(tuple);
+        this.parseSequence=new ArrayList<>();
     }
 }
