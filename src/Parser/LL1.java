@@ -294,7 +294,7 @@ public class LL1 {
                             if (terminal.equals("E")) {
                                 System.out.println(" and $");
                             } else {
-                                System.out.println(" and terminal "+terminal);
+                                System.out.println(" and terminal " + terminal);
                             }
                             return;
                         }
@@ -470,4 +470,30 @@ public class LL1 {
         }
         this.parseSequence = new ArrayList<>();
     }
+
+//    public void createFantasticTable() {
+//        List<Tuple<String, Integer, Integer>> fantasticTable = new ArrayList<>();
+//        Map<String, Pair<Integer, Integer>> fT = new HashMap<>();
+//        fT.put("S",new Pair<>(0,0));
+//        String initialS = this.grammar.getS();
+//        String productionsString = this.parseSequence.get(this.parseSequence.size() - 1).getOutputStack();
+////            System.out.println(productionsString);
+////            System.out.println(productionsString.length());
+//        for (int i = productionsString.length() - 1; i >= 0; i--) {
+////                System.out.println(i+" "+productionsString.charAt(i));
+////                System.out.println("Production number "+Character.getNumericValue(productionsString.charAt(i)));
+//            String rhs = "";
+//            for (String symbol : grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getValue()) {
+//                rhs = rhs + symbol + " ";
+//                if (!fantasticTable.){
+//                    final int finalI = i;
+////                    fT.put(symbol,new Pair<>(fT.keySet().stream().filter(key->key.equals(grammar.getP().get(Character.getNumericValue(productionsString.charAt(finalI)) - 1).getKey()))
+////                    .map()),8)
+//                    fantasticTable.add(new Tuple<>())
+//                }
+//            }
+//            System.out.println(grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getKey() + "->" +
+//                    rhs);
+//        }
+//    }
 }

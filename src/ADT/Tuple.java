@@ -40,4 +40,10 @@ public class Tuple<K1, K2, K3> {
         return "Tuple { workingStack = " + work + ", inputStack = "
                 + input + ", outputStack = " + output + "}\n";
     }
+
+    public boolean containsK1(K1 k1) {
+        if (this.work == k1)
+            return true;
+        return false;
+    }
 }
