@@ -1,0 +1,1 @@
+begin int main ( ) { @a type int; print a; return 0; } end
