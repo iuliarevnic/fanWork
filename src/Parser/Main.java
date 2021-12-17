@@ -102,6 +102,7 @@ public class Main {
 
                     ll1.saveParserOutputToFile();
                     ll1.printParserOutput();
+                    ll1.createFantasticTable();
 
 
                 }

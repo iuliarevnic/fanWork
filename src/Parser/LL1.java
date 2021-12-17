@@ -454,32 +454,57 @@ public class LL1 {
 //
 //        System.out.println();
     }
+    private boolean tableContains(List<Tuple<String, Integer, Integer>> ft, String symbol){
+        for(Tuple tuple:ft){
+            if(tuple.getWorkingStack().equals(symbol))
+                return true;
+        }
+        return false;
+    }
 
-//    public void createFantasticTable() {
-//        //List<Tuple<String, Integer, Integer>> fantasticTable = new ArrayList<>();
+    private int tableIndex(List<Tuple<String, Integer, Integer>> ft, String symbol){
+        int i=0;
+        for(Tuple tuple:ft){
+            if(tuple.getWorkingStack().equals(symbol))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
+
+    public void createFantasticTable() {
+        List<Tuple<String, Integer, Integer>> ft = new ArrayList<>();
 //        Map<String, Pair<Integer, Integer>> fT = new HashMap<>();
-//        fT.put("S",new Pair<>(0,0));
-//        String initialS = this.grammar.getS();
-//        String productionsString = this.parseSequence.get(this.parseSequence.size() - 1).getOutputStack();
-////            System.out.println(productionsString);
-////            System.out.println(productionsString.length());
-//        for (int i = productionsString.length() - 1; i >= 0; i--) {
-////                System.out.println(i+" "+productionsString.charAt(i));
-////                System.out.println("Production number "+Character.getNumericValue(productionsString.charAt(i)));
-//            String rhs = "";
-//            for (String symbol : grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getValue()) {
-//                rhs = rhs + symbol + " ";
-//                if (!fantasticTable.){
+        ft.add(new Tuple<>("S",0,0));
+        String initialS = this.grammar.getS();
+        String productionsString = this.parseSequence.get(this.parseSequence.size() - 1).getOutputStack();
+//            System.out.println(productionsString);
+//            System.out.println(productionsString.length());
+        for (int i = productionsString.length() - 1; i >= 0; i--) {
+//                System.out.println(i+" "+productionsString.charAt(i));
+//                System.out.println("Production number "+Character.getNumericValue(productionsString.charAt(i)));
+            String rhs = "";
+            List<String> rhsSymbols=grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getValue();
+            String lhs=grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getKey();
+            for (String symbol : grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getValue()) {
+                rhs = rhs + symbol + " ";
+                if (!tableContains(ft,symbol)){
 //                    final int finalI = i;
-////                    fT.put(symbol,new Pair<>(fT.keySet().stream().filter(key->key.equals(grammar.getP().get(Character.getNumericValue(productionsString.charAt(finalI)) - 1).getKey()))
-////                    .map()),8)
+//                    fT.put(symbol,new Pair<>(fT.keySet().stream().filter(key->key.equals(grammar.getP().get(Character.getNumericValue(productionsString.charAt(finalI)) - 1).getKey()))
+//                    .map()),8)
+                    ft.add(new Tuple<>(symbol,tableIndex(ft,lhs),0));
+                    if(!symbol.equals(rhsSymbols.get(rhsSymbols.size()-1))){
+                        ft.set(tableIndex(ft,symbol),new Tuple<>(symbol,tableIndex(ft,lhs),tableIndex(ft,symbol)+1));
+                    }
 //                    fantasticTable.add(new Tuple<>());
-//                }
-//            }
-//            System.out.println(grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getKey() + "->" +
-//                    rhs);
-//        }
-//    }
+                }
+            }
+
+        }
+        System.out.println(ft);
+        this.parseSequence = new ArrayList<>();
+    }
 
     public void printParserOutput() {
         System.out.println("====PARSER OUTPUT====");
@@ -494,7 +519,7 @@ public class LL1 {
             System.out.println(grammar.getP().get(Character.getNumericValue(productionsString.charAt(i)) - 1).getKey() + "->" +
                     rhs);
         }
-        this.parseSequence = new ArrayList<>();
+//        this.parseSequence = new ArrayList<>();
     }
 
 //    public void createFantasticTable() {

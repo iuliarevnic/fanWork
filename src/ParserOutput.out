@@ -1,16 +1,1 @@
-S->B A 
-B->D C 
-D->a 
-C->* D C 
-D->( S ) 
-S->B A 
-B->D C 
-D->a 
-C->E 
-A->+ B A 
-B->D C 
-D->a 
-C->E 
-A->E 
-C->E 
-A->E 
+ARRAYDEL->identifier . del ( IDCONST ) ; 
